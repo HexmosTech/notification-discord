@@ -1,4 +1,5 @@
-module github.com/apache/incubator-answer-plugins/notification-slack
+module github.com/LinceMathew/discord-notification
+
 
 go 1.19
 
