@@ -1,9 +1,10 @@
-module github.com/LinceMathew/discord-notification
+module github.com/LinceMathew/notification-discord
 
 go 1.19
 
 require (
 	github.com/apache/incubator-answer v1.3.6
+	github.com/apache/incubator-answer-plugins/notification-slack v1.0.2
 	github.com/apache/incubator-answer-plugins/util v1.0.2
 	github.com/go-resty/resty/v2 v2.11.0
 	github.com/segmentfault/pacman v1.0.5-0.20230822083413-c0075a2d401f
@@ -11,7 +12,6 @@ require (
 
 require (
 	github.com/LinkinStars/go-i18n/v2 v2.2.2 // indirect
-	github.com/apache/incubator-answer-plugins/notification-slack v1.0.2 // indirect
 	github.com/aymerick/douceur v0.2.0 // indirect
 	github.com/bytedance/sonic v1.9.1 // indirect
 	github.com/chenzhuoyu/base64x v0.0.0-20221115062448-fe3a3abad311 // indirect
