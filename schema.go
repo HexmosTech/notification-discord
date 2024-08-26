@@ -20,11 +20,34 @@
 package slack
 
 type WebhookReq struct {
-	Content string `json:"content"`
+	Blocks []struct {
+		Type string `json:"type"`
+		Text struct {
+			Type string `json:"type"`
+			Text string `json:"text"`
+		} `json:"content"`
+	} `json:"blocks"`
 }
 
 func NewWebhookReq(content string) *WebhookReq {
 	return &WebhookReq{
-		Content: content,
+		Blocks: []struct {
+			Type string `json:"type"`
+			Text struct {
+				Type string `json:"type"`
+				Text string `json:"text"`
+			} `json:"content"`
+		}{
+			{
+				Type: "section",
+				Text: struct {
+					Type string `json:"type"`
+					Text string `json:"text"`
+				}{
+					Type: "mrkdwn",
+					Text: content,
+				},
+			},
+		},
 	}
 }
