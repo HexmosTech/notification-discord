@@ -17,12 +17,12 @@
  * under the License.
  */
 
-package slack
+package discord
 
 import (
 	"encoding/json"
 
-	"github.com/apache/incubator-answer-plugins/notification-slack/i18n"
+	"github.com/LinceMathew/notification-discord/i18n"
 	"github.com/apache/incubator-answer/plugin"
 )
 

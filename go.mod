@@ -4,7 +4,6 @@ go 1.19
 
 require (
 	github.com/apache/incubator-answer v1.3.6
-	github.com/apache/incubator-answer-plugins/notification-slack v1.0.2
 	github.com/apache/incubator-answer-plugins/util v1.0.2
 	github.com/go-resty/resty/v2 v2.11.0
 	github.com/segmentfault/pacman v1.0.5-0.20230822083413-c0075a2d401f
