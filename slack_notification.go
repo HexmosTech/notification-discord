@@ -45,12 +45,14 @@ func init() {
 		UserConfigCache: NewUserConfigCache(),
 	}
 	plugin.Register(uc)
+	log.Debugf("Slack notification plugin initialized")
 }
 
 func (n *Notification) Info() plugin.Info {
 	info := &util.Info{}
 	info.GetInfo(Info)
 
+	log.Debugf("Retrieving Slack notification plugin info")
 	return plugin.Info{
 		Name:        plugin.MakeTranslator(slackI18n.InfoName),
 		SlugName:    info.SlugName,
@@ -63,30 +65,33 @@ func (n *Notification) Info() plugin.Info {
 
 // GetNewQuestionSubscribers returns the subscribers of the new question notification
 func (n *Notification) GetNewQuestionSubscribers() (userIDs []string) {
+	log.Debugf("Getting new question subscribers")
 	for userID, conf := range n.UserConfigCache.userConfigMapping {
 		if conf.AllNewQuestions {
 			userIDs = append(userIDs, userID)
 		}
 	}
+	log.Debugf("Found %d subscribers for new questions", len(userIDs))
 	return userIDs
 }
 
 // Notify sends a notification to the user
 func (n *Notification) Notify(msg plugin.NotificationMessage) {
-	log.Debugf("try to send notification %+v", msg)
+	log.Debugf("Attempting to send notification: %+v", msg)
 
 	if !n.Config.Notification {
+		log.Debugf("Notifications are disabled in config")
 		return
 	}
 
 	// get user config
 	userConfig, err := n.getUserConfig(msg.ReceiverUserID)
 	if err != nil {
-		log.Errorf("get user config failed: %v", err)
+		log.Errorf("Failed to get user config: %v", err)
 		return
 	}
 	if userConfig == nil {
-		log.Debugf("user %s has no config", msg.ReceiverUserID)
+		log.Debugf("User %s has no config", msg.ReceiverUserID)
 		return
 	}
 
@@ -94,34 +99,36 @@ func (n *Notification) Notify(msg plugin.NotificationMessage) {
 	switch msg.Type {
 	case plugin.NotificationNewQuestion:
 		if !userConfig.AllNewQuestions {
-			log.Debugf("user %s not config the new question", msg.ReceiverUserID)
+			log.Debugf("User %s has not configured new question notifications", msg.ReceiverUserID)
 			return
 		}
 	case plugin.NotificationNewQuestionFollowedTag:
 		if !userConfig.NewQuestionsForFollowingTags {
-			log.Debugf("user %s not config the new question followed tag", msg.ReceiverUserID)
+			log.Debugf("User %s has not configured new question followed tag notifications", msg.ReceiverUserID)
 			return
 		}
 	default:
 		if !userConfig.InboxNotifications {
-			log.Debugf("user %s not config the inbox notification", msg.ReceiverUserID)
+			log.Debugf("User %s has not configured inbox notifications", msg.ReceiverUserID)
 			return
 		}
 	}
 
-	log.Debugf("user %s config the notification", msg.ReceiverUserID)
+	log.Debugf("User %s has configured the notification", msg.ReceiverUserID)
 
 	if len(userConfig.WebhookURL) == 0 {
-		log.Errorf("user %s has no webhook url", msg.ReceiverUserID)
+		log.Errorf("User %s has no webhook URL", msg.ReceiverUserID)
 		return
 	}
 
 	notificationMsg := renderNotification(msg)
 	// no need to send empty message
 	if len(notificationMsg) == 0 {
-		log.Debugf("this type of notification will be drop, the type is %s", msg.Type)
+		log.Debugf("Empty notification message for type %s, dropping", msg.Type)
 		return
 	}
+
+	log.Debugf("Sending message to %s: %s", msg.ReceiverUserID, notificationMsg)
 
 	// Create a Resty Client
 	client := resty.New()
@@ -131,36 +138,41 @@ func (n *Notification) Notify(msg plugin.NotificationMessage) {
 		Post(userConfig.WebhookURL)
 
 	if err != nil {
-		log.Errorf("send message failed: %v %v", err, resp)
+		log.Errorf("Failed to send message: %v, Response: %v", err, resp)
 	} else {
-		log.Infof("send message to %s success, resp: %s", msg.ReceiverUserID, resp.String())
+		log.Infof("Successfully sent message to %s, Response: %s", msg.ReceiverUserID, resp.String())
 	}
 }
 
 func renderNotification(msg plugin.NotificationMessage) string {
+	log.Debugf("Rendering notification for message type: %s", msg.Type)
 	lang := i18n.Language(msg.ReceiverLang)
+	var result string
 	switch msg.Type {
 	case plugin.NotificationUpdateQuestion:
-		return plugin.TranslateWithData(lang, slackI18n.TplUpdateQuestion, msg)
+		result = plugin.TranslateWithData(lang, slackI18n.TplUpdateQuestion, msg)
 	case plugin.NotificationAnswerTheQuestion:
-		return plugin.TranslateWithData(lang, slackI18n.TplAnswerTheQuestion, msg)
+		result = plugin.TranslateWithData(lang, slackI18n.TplAnswerTheQuestion, msg)
 	case plugin.NotificationUpdateAnswer:
-		return plugin.TranslateWithData(lang, slackI18n.TplUpdateAnswer, msg)
+		result = plugin.TranslateWithData(lang, slackI18n.TplUpdateAnswer, msg)
 	case plugin.NotificationAcceptAnswer:
-		return plugin.TranslateWithData(lang, slackI18n.TplAcceptAnswer, msg)
+		result = plugin.TranslateWithData(lang, slackI18n.TplAcceptAnswer, msg)
 	case plugin.NotificationCommentQuestion:
-		return plugin.TranslateWithData(lang, slackI18n.TplCommentQuestion, msg)
+		result = plugin.TranslateWithData(lang, slackI18n.TplCommentQuestion, msg)
 	case plugin.NotificationCommentAnswer:
-		return plugin.TranslateWithData(lang, slackI18n.TplCommentAnswer, msg)
+		result = plugin.TranslateWithData(lang, slackI18n.TplCommentAnswer, msg)
 	case plugin.NotificationReplyToYou:
-		return plugin.TranslateWithData(lang, slackI18n.TplReplyToYou, msg)
+		result = plugin.TranslateWithData(lang, slackI18n.TplReplyToYou, msg)
 	case plugin.NotificationMentionYou:
-		return plugin.TranslateWithData(lang, slackI18n.TplMentionYou, msg)
+		result = plugin.TranslateWithData(lang, slackI18n.TplMentionYou, msg)
 	case plugin.NotificationInvitedYouToAnswer:
-		return plugin.TranslateWithData(lang, slackI18n.TplInvitedYouToAnswer, msg)
+		result = plugin.TranslateWithData(lang, slackI18n.TplInvitedYouToAnswer, msg)
 	case plugin.NotificationNewQuestion, plugin.NotificationNewQuestionFollowedTag:
 		msg.QuestionTags = strings.Join(strings.Split(msg.QuestionTags, ","), ", ")
-		return plugin.TranslateWithData(lang, slackI18n.TplNewQuestion, msg)
+		result = plugin.TranslateWithData(lang, slackI18n.TplNewQuestion, msg)
+	default:
+		log.Debugf("Unknown notification type: %s", msg.Type)
 	}
-	return ""
+	log.Debugf("Rendered notification: %s", result)
+	return result
 }
