@@ -17,37 +17,34 @@
  * under the License.
  */
 
-package slack
+package discord
 
+// WebhookReq represents the structure of a Discord webhook request
 type WebhookReq struct {
-	Content []struct {
-		Type string `json:"type"`
-		Text struct {
-			Type string `json:"type"`
-			Text string `json:"text"`
-		} `json:"text"`
-	} `json:"content"`
+	Content string `json:"content"`
+	Embeds  []Embed `json:"embeds,omitempty"`
 }
 
+// Embed represents a rich embed in a Discord message
+type Embed struct {
+	Title       string `json:"title,omitempty"`
+	Description string `json:"description,omitempty"`
+	Color       int    `json:"color,omitempty"`
+	// Add more fields as needed
+}
+
+// NewWebhookReq creates a new WebhookReq with a simple text message
 func NewWebhookReq(content string) *WebhookReq {
 	return &WebhookReq{
-		Content: []struct {
-			Type string `json:"type"`
-			Text struct {
-				Type string `json:"type"`
-				Text string `json:"text"`
-			} `json:"text"`
-		}{
-			{
-				Type: "section",
-				Text: struct {
-					Type string `json:"type"`
-					Text string `json:"text"`
-				}{
-					Type: "mrkdwn",
-					Text: content,
-				},
-			},
-		},
+		Content: content,
 	}
+}
+
+// AddEmbed adds a new embed to the WebhookReq
+func (w *WebhookReq) AddEmbed(title, description string, color int) {
+	w.Embeds = append(w.Embeds, Embed{
+		Title:       title,
+		Description: description,
+		Color:       color,
+	})
 }

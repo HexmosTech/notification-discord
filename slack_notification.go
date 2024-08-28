@@ -17,7 +17,7 @@
  * under the License.
  */
 
-package slack
+package discord
 
 import (
 	"embed"
@@ -25,7 +25,7 @@ import (
 	"github.com/go-resty/resty/v2"
 	"strings"
 
-	slackI18n "github.com/apache/incubator-answer-plugins/notification-slack/i18n"
+	discordI18n "github.com/apache/incubator-answer-plugins/notification-discord/i18n"
 	"github.com/apache/incubator-answer/plugin"
 	"github.com/segmentfault/pacman/i18n"
 	"github.com/segmentfault/pacman/log"
@@ -45,18 +45,16 @@ func init() {
 		UserConfigCache: NewUserConfigCache(),
 	}
 	plugin.Register(uc)
-	log.Debugf("Slack notification plugin initialized")
 }
 
 func (n *Notification) Info() plugin.Info {
 	info := &util.Info{}
 	info.GetInfo(Info)
 
-	log.Debugf("Retrieving Slack notification plugin info")
 	return plugin.Info{
-		Name:        plugin.MakeTranslator(slackI18n.InfoName),
+		Name:        plugin.MakeTranslator(discordI18n.InfoName),
 		SlugName:    info.SlugName,
-		Description: plugin.MakeTranslator(slackI18n.InfoDescription),
+		Description: plugin.MakeTranslator(discordI18n.InfoDescription),
 		Author:      info.Author,
 		Version:     info.Version,
 		Link:        info.Link,
@@ -65,33 +63,30 @@ func (n *Notification) Info() plugin.Info {
 
 // GetNewQuestionSubscribers returns the subscribers of the new question notification
 func (n *Notification) GetNewQuestionSubscribers() (userIDs []string) {
-	log.Debugf("Getting new question subscribers")
 	for userID, conf := range n.UserConfigCache.userConfigMapping {
 		if conf.AllNewQuestions {
 			userIDs = append(userIDs, userID)
 		}
 	}
-	log.Debugf("Found %d subscribers for new questions", len(userIDs))
 	return userIDs
 }
 
 // Notify sends a notification to the user
 func (n *Notification) Notify(msg plugin.NotificationMessage) {
-	log.Debugf("Attempting to send notification: %+v", msg)
+	log.Debugf("try to send notification %+v", msg)
 
 	if !n.Config.Notification {
-		log.Debugf("Notifications are disabled in config")
 		return
 	}
 
 	// get user config
 	userConfig, err := n.getUserConfig(msg.ReceiverUserID)
 	if err != nil {
-		log.Errorf("Failed to get user config: %v", err)
+		log.Errorf("get user config failed: %v", err)
 		return
 	}
 	if userConfig == nil {
-		log.Debugf("User %s has no config", msg.ReceiverUserID)
+		log.Debugf("user %s has no config", msg.ReceiverUserID)
 		return
 	}
 
@@ -99,36 +94,34 @@ func (n *Notification) Notify(msg plugin.NotificationMessage) {
 	switch msg.Type {
 	case plugin.NotificationNewQuestion:
 		if !userConfig.AllNewQuestions {
-			log.Debugf("User %s has not configured new question notifications", msg.ReceiverUserID)
+			log.Debugf("user %s not config the new question", msg.ReceiverUserID)
 			return
 		}
 	case plugin.NotificationNewQuestionFollowedTag:
 		if !userConfig.NewQuestionsForFollowingTags {
-			log.Debugf("User %s has not configured new question followed tag notifications", msg.ReceiverUserID)
+			log.Debugf("user %s not config the new question followed tag", msg.ReceiverUserID)
 			return
 		}
 	default:
 		if !userConfig.InboxNotifications {
-			log.Debugf("User %s has not configured inbox notifications", msg.ReceiverUserID)
+			log.Debugf("user %s not config the inbox notification", msg.ReceiverUserID)
 			return
 		}
 	}
 
-	log.Debugf("User %s has configured the notification", msg.ReceiverUserID)
+	log.Debugf("user %s config the notification", msg.ReceiverUserID)
 
 	if len(userConfig.WebhookURL) == 0 {
-		log.Errorf("User %s has no webhook URL", msg.ReceiverUserID)
+		log.Errorf("user %s has no webhook url", msg.ReceiverUserID)
 		return
 	}
 
 	notificationMsg := renderNotification(msg)
 	// no need to send empty message
 	if len(notificationMsg) == 0 {
-		log.Debugf("Empty notification message for type %s, dropping", msg.Type)
+		log.Debugf("this type of notification will be drop, the type is %s", msg.Type)
 		return
 	}
-
-	log.Debugf("Sending message to %s: %s", msg.ReceiverUserID, notificationMsg)
 
 	// Create a Resty Client
 	client := resty.New()
@@ -138,41 +131,36 @@ func (n *Notification) Notify(msg plugin.NotificationMessage) {
 		Post(userConfig.WebhookURL)
 
 	if err != nil {
-		log.Errorf("Failed to send message: %v, Response: %v", err, resp)
+		log.Errorf("send message failed: %v %v", err, resp)
 	} else {
-		log.Infof("Successfully sent message to %s, Response: %s", msg.ReceiverUserID, resp.String())
+		log.Infof("send message to %s success, resp: %s", msg.ReceiverUserID, resp.String())
 	}
 }
 
 func renderNotification(msg plugin.NotificationMessage) string {
-	log.Debugf("Rendering notification for message type: %s", msg.Type)
 	lang := i18n.Language(msg.ReceiverLang)
-	var result string
 	switch msg.Type {
 	case plugin.NotificationUpdateQuestion:
-		result = plugin.TranslateWithData(lang, slackI18n.TplUpdateQuestion, msg)
+		return plugin.TranslateWithData(lang, discordI18n.TplUpdateQuestion, msg)
 	case plugin.NotificationAnswerTheQuestion:
-		result = plugin.TranslateWithData(lang, slackI18n.TplAnswerTheQuestion, msg)
+		return plugin.TranslateWithData(lang, discordI18n.TplAnswerTheQuestion, msg)
 	case plugin.NotificationUpdateAnswer:
-		result = plugin.TranslateWithData(lang, slackI18n.TplUpdateAnswer, msg)
+		return plugin.TranslateWithData(lang, discordI18n.TplUpdateAnswer, msg)
 	case plugin.NotificationAcceptAnswer:
-		result = plugin.TranslateWithData(lang, slackI18n.TplAcceptAnswer, msg)
+		return plugin.TranslateWithData(lang, discordI18n.TplAcceptAnswer, msg)
 	case plugin.NotificationCommentQuestion:
-		result = plugin.TranslateWithData(lang, slackI18n.TplCommentQuestion, msg)
+		return plugin.TranslateWithData(lang, discordI18n.TplCommentQuestion, msg)
 	case plugin.NotificationCommentAnswer:
-		result = plugin.TranslateWithData(lang, slackI18n.TplCommentAnswer, msg)
+		return plugin.TranslateWithData(lang, discordI18n.TplCommentAnswer, msg)
 	case plugin.NotificationReplyToYou:
-		result = plugin.TranslateWithData(lang, slackI18n.TplReplyToYou, msg)
+		return plugin.TranslateWithData(lang, discordI18n.TplReplyToYou, msg)
 	case plugin.NotificationMentionYou:
-		result = plugin.TranslateWithData(lang, slackI18n.TplMentionYou, msg)
+		return plugin.TranslateWithData(lang, discordI18n.TplMentionYou, msg)
 	case plugin.NotificationInvitedYouToAnswer:
-		result = plugin.TranslateWithData(lang, slackI18n.TplInvitedYouToAnswer, msg)
+		return plugin.TranslateWithData(lang, discordI18n.TplInvitedYouToAnswer, msg)
 	case plugin.NotificationNewQuestion, plugin.NotificationNewQuestionFollowedTag:
 		msg.QuestionTags = strings.Join(strings.Split(msg.QuestionTags, ","), ", ")
-		result = plugin.TranslateWithData(lang, slackI18n.TplNewQuestion, msg)
-	default:
-		log.Debugf("Unknown notification type: %s", msg.Type)
+		return plugin.TranslateWithData(lang, discordI18n.TplNewQuestion, msg)
 	}
-	log.Debugf("Rendered notification: %s", result)
-	return result
+	return ""
 }
