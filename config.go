@@ -22,7 +22,7 @@ package discord
 import (
 	"encoding/json"
 
-	"github.com/LinceMathew/notification-discord/i18n"
+	"github.com/HexmosTech/notification-discord/i18n"
 	"github.com/apache/incubator-answer/plugin"
 )
 

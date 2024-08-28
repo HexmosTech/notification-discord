@@ -24,7 +24,7 @@ import (
 	"fmt"
 	"sync"
 
-	"github.com/LinceMathew/notification-discord/i18n"
+	"github.com/HexmosTech/notification-discord/i18n"
 	"github.com/apache/incubator-answer/plugin"
 	"github.com/segmentfault/pacman/log"
 )

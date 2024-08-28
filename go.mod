@@ -1,4 +1,4 @@
-module github.com/LinceMathew/notification-discord
+module github.com/HexmosTech/notification-discord
 
 go 1.19
 
