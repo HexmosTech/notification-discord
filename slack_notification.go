@@ -117,6 +117,7 @@ func (n *Notification) Notify(msg plugin.NotificationMessage) {
 	}
 
 	notificationMsg := renderNotification(msg)
+	log.Debugf("notification message: %s", notificationMsg)
 	// no need to send empty message
 	if len(notificationMsg) == 0 {
 		log.Debugf("this type of notification will be drop, the type is %s", msg.Type)
