@@ -21,7 +21,6 @@ package discord
 
 import (
 	"embed"
-	"fmt"
 	"strings"
 
 	"github.com/apache/incubator-answer-plugins/util"
@@ -29,6 +28,7 @@ import (
 
 	discordI18n "github.com/HexmosTech/notification-discord/i18n"
 	"github.com/apache/incubator-answer/plugin"
+	"github.com/segmentfault/pacman/i18n"
 	"github.com/segmentfault/pacman/log"
 )
 
@@ -140,35 +140,35 @@ func (n *Notification) Notify(msg plugin.NotificationMessage) {
 }
 
 func renderNotification(msg plugin.NotificationMessage) string {
-	// lang := i18n.Language(msg.ReceiverLang)
+	lang := i18n.Language(msg.ReceiverLang)
 	switch msg.Type {
-	case plugin.NotificationUpdateAnswer:
-		return formatMarkdownNotification(msg.TriggerUserDisplayName, msg.TriggerUserUrl, "updated answer", msg.QuestionTitle, msg.QuestionUrl)
 	case plugin.NotificationUpdateQuestion:
-		return formatMarkdownNotification(msg.TriggerUserDisplayName, msg.TriggerUserUrl, "updated question", msg.QuestionTitle, msg.QuestionUrl)
+		return plugin.TranslateWithData(lang, discordI18n.TplUpdateQuestion, msg)
 	case plugin.NotificationAnswerTheQuestion:
-		return formatMarkdownNotification(msg.TriggerUserDisplayName, msg.TriggerUserUrl, "answered your question", msg.QuestionTitle, msg.QuestionUrl)
+		return plugin.TranslateWithData(lang, discordI18n.TplAnswerTheQuestion, msg)
+	case plugin.NotificationUpdateAnswer:
+		return plugin.TranslateWithData(lang, discordI18n.TplUpdateAnswer, msg)
 	case plugin.NotificationAcceptAnswer:
-		return formatMarkdownNotification(msg.TriggerUserDisplayName, msg.TriggerUserUrl, "accepted your answer", msg.QuestionTitle, msg.QuestionUrl)
+		return plugin.TranslateWithData(lang, discordI18n.TplAcceptAnswer, msg)
 	case plugin.NotificationCommentQuestion:
-		return formatMarkdownNotification(msg.TriggerUserDisplayName, msg.TriggerUserUrl, "commented on your question", msg.QuestionTitle, msg.QuestionUrl)
+		return plugin.TranslateWithData(lang, discordI18n.TplCommentQuestion, msg)
 	case plugin.NotificationCommentAnswer:
-		return formatMarkdownNotification(msg.TriggerUserDisplayName, msg.TriggerUserUrl, "commented on your answer", msg.QuestionTitle, msg.QuestionUrl)
+		return plugin.TranslateWithData(lang, discordI18n.TplCommentAnswer, msg)
 	case plugin.NotificationReplyToYou:
-		return formatMarkdownNotification(msg.TriggerUserDisplayName, msg.TriggerUserUrl, "replied to your comment", msg.QuestionTitle, msg.QuestionUrl)
+		return plugin.TranslateWithData(lang, discordI18n.TplReplyToYou, msg)
 	case plugin.NotificationMentionYou:
-		return formatMarkdownNotification(msg.TriggerUserDisplayName, msg.TriggerUserUrl, "mentioned you in a comment", msg.QuestionTitle, msg.QuestionUrl)
+		return plugin.TranslateWithData(lang, discordI18n.TplMentionYou, msg)
 	case plugin.NotificationInvitedYouToAnswer:
-		return formatMarkdownNotification(msg.TriggerUserDisplayName, msg.TriggerUserUrl, "invited you to answer", msg.QuestionTitle, msg.QuestionUrl)
+		return plugin.TranslateWithData(lang, discordI18n.TplInvitedYouToAnswer, msg)
 	case plugin.NotificationNewQuestion, plugin.NotificationNewQuestionFollowedTag:
 		msg.QuestionTags = strings.Join(strings.Split(msg.QuestionTags, ","), ", ")
-		return formatMarkdownNotification(msg.TriggerUserDisplayName, msg.TriggerUserUrl, "asked a new question", msg.QuestionTitle, msg.QuestionUrl)
+		return plugin.TranslateWithData(lang, discordI18n.TplNewQuestion, msg)
 	}
 	return ""
 }
 
 // Add this new helper function
-func formatMarkdownNotification(username, userURL, action, title, url string) string {
-	log.Infof("username: %s, userURL: %s, action: %s, title: %s, url: %s", username, userURL, action, title, url)
-	return fmt.Sprintf("[%s](%s) %s [%s](%s)", username, userURL, action, title, url)
-}
+// func formatMarkdownNotification(username, userURL, action, title, url string) string {
+// 	log.Infof("username: %s, userURL: %s, action: %s, title: %s, url: %s", username, userURL, action, title, url)
+// 	return fmt.Sprintf("[%s](%s) %s [%s](%s)", username, userURL, action, title, url)
+// }

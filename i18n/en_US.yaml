@@ -20,9 +20,9 @@ plugin:
     backend:
       info:
         name:
-          other: Slack Notification
+          other: Discord Notification
         description:
-          other: Send notifications to Slack
+          other: Send notifications to Discord
       config:
         tip:
           title:
@@ -61,22 +61,22 @@ plugin:
             other: Get notified of new questions for following tags.
       tpl:
         update_question:
-          other: "<{{.TriggerUserUrl}}|{{.TriggerUserDisplayName}}> updated question <{{.QuestionUrl}}|{{.QuestionTitle}}>"
+          other: "[{{.TriggerUserDisplayName}}]({{.TriggerUserUrl}}) updated question [{{.QuestionTitle}}]({{.QuestionUrl}})"
         answer_the_question:
-          other: "<{{.TriggerUserUrl}}|{{.TriggerUserDisplayName}}> answered the question <{{.AnswerUrl}}|{{.QuestionTitle}}>"
+          other: "[{{.TriggerUserDisplayName}}]({{.TriggerUserUrl}}) answered the question [{{.QuestionTitle}}]({{.AnswerUrl}})"
         update_answer:
-          other: "<{{.TriggerUserUrl}}|{{.TriggerUserDisplayName}}> updated answer <{{.AnswerUrl}}|{{.QuestionTitle}}>"
+          other: "[{{.TriggerUserDisplayName}}]({{.TriggerUserUrl}}) updated answer [{{.QuestionTitle}}]({{.AnswerUrl}})"
         accept_answer:
-          other: "<{{.TriggerUserUrl}}|{{.TriggerUserDisplayName}}> accepted answer <{{.AnswerUrl}}|{{.QuestionTitle}}>"
+          other: "[{{.TriggerUserDisplayName}}]({{.TriggerUserUrl}}) accepted answer [{{.QuestionTitle}}]({{.AnswerUrl}})"
         comment_question:
-          other: "<{{.TriggerUserUrl}}|{{.TriggerUserDisplayName}}> commented question <{{.CommentUrl}}|{{.QuestionTitle}}>"
+          other: "[{{.TriggerUserDisplayName}}]({{.TriggerUserUrl}}) commented on question [{{.QuestionTitle}}]({{.CommentUrl}})"
         comment_answer:
-          other: "<{{.TriggerUserUrl}}|{{.TriggerUserDisplayName}}> commented answer <{{.CommentUrl}}|{{.QuestionTitle}}>"
+          other: "[{{.TriggerUserDisplayName}}]({{.TriggerUserUrl}}) commented on answer [{{.QuestionTitle}}]({{.CommentUrl}})"
         reply_to_you:
-          other: "<{{.TriggerUserUrl}}|{{.TriggerUserDisplayName}}> replied you <{{.CommentUrl}}|{{.QuestionTitle}}>"
+          other: "[{{.TriggerUserDisplayName}}]({{.TriggerUserUrl}}) replied to you [{{.QuestionTitle}}]({{.CommentUrl}})"
         mention_you:
-          other: "<{{.TriggerUserUrl}}|{{.TriggerUserDisplayName}}> mentioned you <{{.CommentUrl}}|{{.QuestionTitle}}>"
+          other: "[{{.TriggerUserDisplayName}}]({{.TriggerUserUrl}}) mentioned you [{{.QuestionTitle}}]({{.CommentUrl}})"
         invited_you_to_answer:
-          other: "<{{.TriggerUserUrl}}|{{.TriggerUserDisplayName}}> invited you to answer <{{.QuestionUrl}}|{{.QuestionTitle}}>"
+          other: "[{{.TriggerUserDisplayName}}]({{.TriggerUserUrl}}) invited you to answer [{{.QuestionTitle}}]({{.QuestionUrl}})"
         new_question:
-          other: "New question:\n<{{.QuestionUrl}}|{{.QuestionTitle}}>\n{{.QuestionTags}}"
+          other: "[{{.TriggerUserDisplayName}}]({{.TriggerUserUrl}}) asked a new question:\n[{{.QuestionTitle}}]({{.QuestionUrl}})\n{{.QuestionTags}}"
