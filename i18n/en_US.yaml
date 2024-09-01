@@ -33,7 +33,7 @@ plugin:
           title:
             other: Notifications
           description:
-            other: Users will receive notifications on Slack.
+            other: Users will receive notifications on Discord.
       user_config:
         webhook_url:
           title:
@@ -73,10 +73,10 @@ plugin:
         comment_answer:
           other: "[{{.TriggerUserDisplayName}}]({{.TriggerUserUrl}}) commented on answer [{{.QuestionTitle}}]({{.CommentUrl}})"
         reply_to_you:
-          other: "[{{.TriggerUserDisplayName}}]({{.TriggerUserUrl}}) replied to you [{{.QuestionTitle}}]({{.CommentUrl}})"
+          other: "[{{.TriggerUserDisplayName}}]({{.TriggerUserUrl}}) replied to [{{.QuestionTitle}}]({{.CommentUrl}})"
         mention_you:
-          other: "[{{.TriggerUserDisplayName}}]({{.TriggerUserUrl}}) mentioned you [{{.QuestionTitle}}]({{.CommentUrl}})"
+          other: "[{{.TriggerUserDisplayName}}]({{.TriggerUserUrl}}) mentioned to answer [{{.QuestionTitle}}]({{.CommentUrl}})"
         invited_you_to_answer:
-          other: "[{{.TriggerUserDisplayName}}]({{.TriggerUserUrl}}) invited you to answer [{{.QuestionTitle}}]({{.QuestionUrl}})"
+          other: "[{{.TriggerUserDisplayName}}]({{.TriggerUserUrl}}) invited to answer [{{.QuestionTitle}}]({{.QuestionUrl}})"
         new_question:
-          other: "[{{.TriggerUserDisplayName}}]({{.TriggerUserUrl}}) asked a new question:\n[{{.QuestionTitle}}]({{.QuestionUrl}})\n{{.QuestionTags}}"
+          other: "🆕 **New Question Asked!** 📝\n\n**Title:** [{{.QuestionTitle}}]({{.QuestionUrl}})\n**Tags:** {{.QuestionTags}}"

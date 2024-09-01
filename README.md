@@ -1,14 +1,14 @@
-# Slack Notification
+# Disccord Notification
 ## Feature
-- Send message to Slack
+- Send message to Discord
 
 ## Config
 > Config Webhook URL and open the notification
 
-- Webhook URL: such as `https://hooks.slack.com/services/T00000000/B00000000/XXXXXXXXXXXXXXXXXXXXXXXX`
+- Webhook URL: such as `https://discord.com/api/webhooks/1234567890/XXXXXXXXXXXXXXXXXXXXXXXX`
 
 ## Preview
-![Slack Config](./docs/slack-config.png)
+![Discord Config](./docs/discord-config.png)
 
 ## Document
-- https://api.slack.com/messaging/webhooks
+- https://discord.com/developers/docs/resources/webhook

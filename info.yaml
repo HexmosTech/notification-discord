@@ -15,7 +15,7 @@
 # specific language governing permissions and limitations
 # under the License.
 
-slug_name: slack_notification
+slug_name: discord_notification
 type: notification
 version: 1.0.3
 author: answerdev
