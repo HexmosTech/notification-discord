@@ -16,7 +16,7 @@
 # under the License.
 
 plugin:
-  slack_notification:
+  discord_notification:
     backend:
       info:
         name:
