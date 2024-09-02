@@ -79,4 +79,4 @@ plugin:
         invited_you_to_answer:
           other: "[{{.TriggerUserDisplayName}}]({{.TriggerUserUrl}}) invited to answer [{{.QuestionTitle}}]({{.QuestionUrl}})"
         new_question:
-          other: "🆕 **New Question Asked!** 📝\n\n**Title:** [{{.QuestionTitle}}]({{.QuestionUrl}})\n**Tags:** {{.QuestionTags}}"
+          other: "🆕 **New Question Asked!**\n\nTitle: [{{.QuestionTitle}}]({{.QuestionUrl}})\nTags: {{.QuestionTags}}"
